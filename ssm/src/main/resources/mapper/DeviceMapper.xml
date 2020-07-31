@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiaoshu.dao.DeviceMapper">
+  <select id="findAll" parameterType="device" resultType="device">
+  		select * from tb_device 
+  		<where>
+  			<if test="deviceName!=null and deviceName!=''">
+  				and device_name like '%${deviceName}%'
+  			</if>
+  			<if test="status!='' and status!=null">
+  				and status=#{status}
+  			</if>
+  		</where>
+  </select>
+</mapper>
