@@ -1,7 +1,11 @@
 package com.xiaoshu.entity;
 
 import java.io.Serializable;
+import java.util.Date;
+
 import javax.persistence.*;
+
+import org.springframework.format.annotation.DateTimeFormat;
 
 @Table(name = "tb_device")
 public class Device implements Serializable {
@@ -10,7 +14,7 @@ public class Device implements Serializable {
     private Integer deviceid;
 
     @Column(name = "device_type")
-    private String deviceType;
+    private Integer deviceType;
 
     @Column(name = "device_name")
     private String deviceName;
@@ -23,124 +27,139 @@ public class Device implements Serializable {
     private Integer price;
 
     private String status;
-
-    private String createtime;
+    
+    @DateTimeFormat(pattern="yyyy-MM-dd")
+    private Date createtime;
 
     private static final long serialVersionUID = 1L;
 
-    /**
-     * @return deviceId
-     */
+   
+
     public Integer getDeviceid() {
-        return deviceid;
-    }
+		return deviceid;
+	}
 
-    /**
-     * @param deviceid
-     */
-    public void setDeviceid(Integer deviceid) {
-        this.deviceid = deviceid;
-    }
 
-    /**
-     * @return device_type
-     */
-    public String getDeviceType() {
-        return deviceType;
-    }
 
-    /**
-     * @param deviceType
-     */
-    public void setDeviceType(String deviceType) {
-        this.deviceType = deviceType == null ? null : deviceType.trim();
-    }
+	public void setDeviceid(Integer deviceid) {
+		this.deviceid = deviceid;
+	}
 
-    /**
-     * @return device_name
-     */
-    public String getDeviceName() {
-        return deviceName;
-    }
 
-    /**
-     * @param deviceName
-     */
-    public void setDeviceName(String deviceName) {
-        this.deviceName = deviceName == null ? null : deviceName.trim();
-    }
 
-    /**
-     * @return device_ram
-     */
-    public String getDeviceRam() {
-        return deviceRam;
-    }
+	public Integer getDeviceType() {
+		return deviceType;
+	}
 
-    /**
-     * @param deviceRam
-     */
-    public void setDeviceRam(String deviceRam) {
-        this.deviceRam = deviceRam == null ? null : deviceRam.trim();
-    }
 
-    /**
-     * @return color
-     */
-    public String getColor() {
-        return color;
-    }
 
-    /**
-     * @param color
-     */
-    public void setColor(String color) {
-        this.color = color == null ? null : color.trim();
-    }
+	public void setDeviceType(Integer deviceType) {
+		this.deviceType = deviceType;
+	}
 
-    /**
-     * @return price
-     */
-    public Integer getPrice() {
-        return price;
-    }
 
-    /**
-     * @param price
-     */
-    public void setPrice(Integer price) {
-        this.price = price;
-    }
 
-    /**
-     * @return status
-     */
-    public String getStatus() {
-        return status;
-    }
+	public String getDeviceName() {
+		return deviceName;
+	}
 
-    /**
-     * @param status
-     */
-    public void setStatus(String status) {
-        this.status = status == null ? null : status.trim();
-    }
 
-    /**
-     * @return createtime
-     */
-    public String getCreatetime() {
-        return createtime;
-    }
 
-    /**
-     * @param createtime
-     */
-    public void setCreatetime(String createtime) {
-        this.createtime = createtime == null ? null : createtime.trim();
-    }
+	public void setDeviceName(String deviceName) {
+		this.deviceName = deviceName;
+	}
 
-    @Override
+
+
+	public String getDeviceRam() {
+		return deviceRam;
+	}
+
+
+
+	public void setDeviceRam(String deviceRam) {
+		this.deviceRam = deviceRam;
+	}
+
+
+
+	public String getColor() {
+		return color;
+	}
+
+
+
+	public void setColor(String color) {
+		this.color = color;
+	}
+
+
+
+	public Integer getPrice() {
+		return price;
+	}
+
+
+
+	public void setPrice(Integer price) {
+		this.price = price;
+	}
+
+
+
+	public String getStatus() {
+		return status;
+	}
+
+
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+
+
+	public Date getCreatetime() {
+		return createtime;
+	}
+
+
+
+	public void setCreatetime(Date createtime) {
+		this.createtime = createtime;
+	}
+
+
+
+	public static long getSerialversionuid() {
+		return serialVersionUID;
+	}
+
+
+
+	public Device(Integer deviceid, Integer deviceType, String deviceName, String deviceRam, String color,
+			Integer price, String status, Date createtime) {
+		super();
+		this.deviceid = deviceid;
+		this.deviceType = deviceType;
+		this.deviceName = deviceName;
+		this.deviceRam = deviceRam;
+		this.color = color;
+		this.price = price;
+		this.status = status;
+		this.createtime = createtime;
+	}
+
+
+
+	public Device() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+
+
+	@Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append(getClass().getSimpleName());

@@ -12,17 +12,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.xiaoshu.config.util.ConfigUtil;
-import com.xiaoshu.entity.Company;
+import com.xiaoshu.entity.Device;
+import com.xiaoshu.entity.DeviceVo;
 import com.xiaoshu.entity.Operation;
-import com.xiaoshu.entity.Person;
-import com.xiaoshu.entity.PersonVo;
 import com.xiaoshu.entity.Role;
+import com.xiaoshu.entity.Type;
 import com.xiaoshu.entity.User;
+import com.xiaoshu.service.DeviceService;
 import com.xiaoshu.service.OperationService;
-import com.xiaoshu.service.PersonService;
 import com.xiaoshu.service.RoleService;
 import com.xiaoshu.service.UserService;
 import com.xiaoshu.util.StringUtil;
@@ -32,9 +31,9 @@ import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageInfo;
 
 @Controller
-@RequestMapping("person")
-public class PersonController extends LogController{
-	static Logger logger = Logger.getLogger(PersonController.class);
+@RequestMapping("phone")
+public class DeviceController extends LogController{
+	static Logger logger = Logger.getLogger(DeviceController.class);
 
 	@Autowired
 	private UserService userService;
@@ -46,24 +45,22 @@ public class PersonController extends LogController{
 	private OperationService operationService;
 	
 	@Autowired
-	private PersonService personService;
+	private DeviceService deviceService;
 	
-	@RequestMapping("personIndex")
+	@RequestMapping("phoneIndex")
 	public String index(HttpServletRequest request,Integer menuid) throws Exception{
 		List<Role> roleList = roleService.findRole(new Role());
 		List<Operation> operationList = operationService.findOperationIdsByMenuid(menuid);
-
 		request.setAttribute("operationList", operationList);
 		request.setAttribute("roleList", roleList);
-		List<Company> clist = personService.findC();
-		request.setAttribute("clist", clist);
-		
-		return "person";
+		List<Type> list = deviceService.findAllT();
+		request.setAttribute("tlist", list);
+		return "phone";
 	}
 	
 	
-	@RequestMapping(value="personList",method=RequestMethod.POST)
-	public void personList(PersonVo personVo,HttpServletRequest request,HttpServletResponse response,String offset,String limit) throws Exception{
+	@RequestMapping(value="phoneList",method=RequestMethod.POST)
+	public void phoneList(DeviceVo deviceVo,HttpServletRequest request,HttpServletResponse response,String offset,String limit) throws Exception{
 		try {
 			
 			String order = request.getParameter("order");
@@ -72,9 +69,9 @@ public class PersonController extends LogController{
 			
 			Integer pageSize = StringUtil.isEmpty(limit)?ConfigUtil.getPageSize():Integer.parseInt(limit);
 			Integer pageNum =  (Integer.parseInt(offset)/pageSize)+1;
-			
 			//PageInfo<User> userList= userService.findUserPage(user,pageNum,pageSize,ordername,order);
-			PageInfo<PersonVo> page = personService.findPage(personVo, pageNum, pageSize);
+			
+			PageInfo<DeviceVo> page = deviceService.findPage(deviceVo, pageNum, pageSize);
 			
 			JSONObject jsonObj = new JSONObject();
 			jsonObj.put("total",page.getTotal() );
@@ -82,7 +79,7 @@ public class PersonController extends LogController{
 	        WriterUtil.write(response,jsonObj.toString());
 		} catch (Exception e) {
 			e.printStackTrace();
-			logger.error("人员展示错误",e);
+			logger.error("用户展示错误",e);
 			throw e;
 		}
 	}
@@ -90,33 +87,33 @@ public class PersonController extends LogController{
 	
 	// 新增或修改
 	@RequestMapping("reserveUser")
-	public void reserveUser(Person person,HttpServletRequest request,User user,HttpServletResponse response){
-		Integer id = person.getId();
+	public void reserveUser(Device device, HttpServletRequest request,User user,HttpServletResponse response){
+		//Integer userId = user.getUserid();
+		Integer id = device.getDeviceid();
 		JSONObject result=new JSONObject();
-		person.setCreateTime(new Date());
+		device.setCreatetime(new Date());
 		try {
-			Person name = personService.findByName(person.getExpressName());
+			Device device2 = deviceService.findByName(device.getDeviceName());
 			if (id != null) {   // userId不为空 说明是修改
 				//User userName = userService.existUserWithUserName(user.getUsername());
-				if(name==null|| name != null && name.getId().equals(id)){
+				if(device2==null||(device2 != null && device2.getDeviceid().equals(id))){
 					//user.setUserid(userId);
 					//userService.updateUser(user);
-					
-					personService.updateP(person);
+					deviceService.updateD(device);
 					result.put("success", true);
 				}else{
 					result.put("success", true);
-					result.put("errorMsg", "该用户名被使用");
+					result.put("errorMsg", "该设备名被使用");
 				}
 				
 			}else {   // 添加
-				if(name==null){  // 没有重复可以添加
+				if(device2==null){  // 没有重复可以添加
 					//userService.addUser(user);
-					personService.addP(person);
+					deviceService.addD(device);
 					result.put("success", true);
 				} else {
 					result.put("success", true);
-					result.put("errorMsg", "该用户名被使用");
+					result.put("errorMsg", "该设备名被使用");
 				}
 			}
 		} catch (Exception e) {
@@ -127,22 +124,7 @@ public class PersonController extends LogController{
 		}
 		WriterUtil.write(response, result.toString());
 	}
-	// 导入
-		@RequestMapping("importPer")
-		public void importPer(MultipartFile newFile, Person person,HttpServletRequest request,User user,HttpServletResponse response){
-			Integer id = person.getId();
-			JSONObject result=new JSONObject();
-			person.setCreateTime(new Date());
-			try {
-				personService.importPer(newFile);
-			} catch (Exception e) {
-				e.printStackTrace();
-				logger.error("导入用户信息错误",e);
-				result.put("success", true);
-				result.put("errorMsg", "对不起，导入失败");
-			}
-			WriterUtil.write(response, result.toString());
-		}
+	
 	
 	@RequestMapping("deleteUser")
 	public void delUser(HttpServletRequest request,HttpServletResponse response){
@@ -151,7 +133,7 @@ public class PersonController extends LogController{
 			String[] ids=request.getParameter("ids").split(",");
 			for (String id : ids) {
 				//userService.deleteUser(Integer.parseInt(id));
-				personService.delP(Integer.parseInt(id));
+				deviceService.delD(Integer.parseInt(id));
 			}
 			result.put("success", true);
 			result.put("delNums", ids.length);
@@ -162,7 +144,22 @@ public class PersonController extends LogController{
 		}
 		WriterUtil.write(response, result.toString());
 	}
-	
+	@RequestMapping("echartsPerson")
+	public void echartsPerson(HttpServletRequest request,HttpServletResponse response){
+		JSONObject result=new JSONObject();
+		try {
+		
+			List<DeviceVo> data= deviceService.findE();
+			result.put("success", true);
+			
+			result.put("data", data);
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.error("表信息错误",e);
+			result.put("errorMsg", "对不起，删除失败");
+		}
+		WriterUtil.write(response, result.toString());
+	}
 	@RequestMapping("editPassword")
 	public void editPassword(HttpServletRequest request,HttpServletResponse response){
 		JSONObject result=new JSONObject();

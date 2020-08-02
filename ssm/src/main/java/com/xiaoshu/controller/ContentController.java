@@ -11,14 +11,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.xiaoshu.config.util.ConfigUtil;
-import com.xiaoshu.entity.Device;
+import com.xiaoshu.entity.Category;
+import com.xiaoshu.entity.Content;
+import com.xiaoshu.entity.ContentVo;
 import com.xiaoshu.entity.Operation;
 import com.xiaoshu.entity.Role;
 import com.xiaoshu.entity.User;
+import com.xiaoshu.service.ContentService;
 import com.xiaoshu.service.OperationService;
-import com.xiaoshu.service.PhoneService;
 import com.xiaoshu.service.RoleService;
 import com.xiaoshu.service.UserService;
 import com.xiaoshu.util.StringUtil;
@@ -28,9 +31,9 @@ import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageInfo;
 
 @Controller
-@RequestMapping("phone")
-public class PhoneController extends LogController{
-	static Logger logger = Logger.getLogger(PhoneController.class);
+@RequestMapping("content")
+public class ContentController extends LogController{
+	static Logger logger = Logger.getLogger(ContentController.class);
 
 	@Autowired
 	private UserService userService;
@@ -42,20 +45,23 @@ public class PhoneController extends LogController{
 	private OperationService operationService;
 	
 	@Autowired
-	private PhoneService ps;
+	private ContentService contentService;
 	
-	@RequestMapping("phoneIndex")
+	@RequestMapping("contentIndex")
 	public String index(HttpServletRequest request,Integer menuid) throws Exception{
 		List<Role> roleList = roleService.findRole(new Role());
 		List<Operation> operationList = operationService.findOperationIdsByMenuid(menuid);
 		request.setAttribute("operationList", operationList);
+		List<Category> list = contentService.findC();
+		
+		request.setAttribute("clist", list);
 		request.setAttribute("roleList", roleList);
-		return "phone";
+		return "content";
 	}
 	
 	
-	@RequestMapping(value="phoneList",method=RequestMethod.POST)
-	public void userList(Device device, HttpServletRequest request,HttpServletResponse response,String offset,String limit) throws Exception{
+	@RequestMapping(value="contentList",method=RequestMethod.POST)
+	public void contentList(ContentVo contentVo,HttpServletRequest request,HttpServletResponse response,String offset,String limit) throws Exception{
 		try {
 			
 			String order = request.getParameter("order");
@@ -64,16 +70,17 @@ public class PhoneController extends LogController{
 			
 			Integer pageSize = StringUtil.isEmpty(limit)?ConfigUtil.getPageSize():Integer.parseInt(limit);
 			Integer pageNum =  (Integer.parseInt(offset)/pageSize)+1;
-			//PageInfo<User> userList= userService.findUserPage(user,pageNum,pageSize,ordername,order);
 			
-			PageInfo<Device> page = ps.findPage(device);
+			//PageInfo<User> userList= userService.findUserPage(user,pageNum,pageSize,ordername,order);
+			PageInfo<ContentVo> page = contentService.findPage(contentVo, pageNum, pageSize);
+			
 			JSONObject jsonObj = new JSONObject();
 			jsonObj.put("total",page.getTotal() );
 			jsonObj.put("rows", page.getList());
 	        WriterUtil.write(response,jsonObj.toString());
 		} catch (Exception e) {
 			e.printStackTrace();
-			logger.error("用户展示错误",e);
+			logger.error("广告展示错误",e);
 			throw e;
 		}
 	}
@@ -81,22 +88,33 @@ public class PhoneController extends LogController{
 	
 	// 新增或修改
 	@RequestMapping("reserveUser")
-	public void reserveUser(Device device,HttpServletRequest request,User user,HttpServletResponse response){
-		Integer id = device.getDeviceid();
-		JSONObject result=new JSONObject();
+	public void reserveUser(Content content, HttpServletRequest request,User user,HttpServletResponse response){
+		//Integer userId = user.getUserid();
+		Integer id = content.getContentid();
+		JSONObject result = new JSONObject();
 		try {
+			Content content2 = contentService.findByName(content.getContenttitle());
 			if (id != null) {   // userId不为空 说明是修改
-					ps.updateP(device);
-					userService.updateUser(user);
-				
-					userService.addUser(user);
+				if(content2==null||(content2.getContentid().equals(id))){
+					//user.setUserid(userId);
+					//userService.updateUser(user);
+					contentService.updateC(content);
 					result.put("success", true);
-				} else {
-					ps.addP(device);
+				}else{
 					result.put("success", true);
 					result.put("errorMsg", "该用户名被使用");
 				}
-			
+				
+			}else {   // 添加
+				if(content2==null){  // 没有重复可以添加
+					//userService.addUser(user);
+					contentService.addC(content);
+					result.put("success", true);
+				} else {
+					result.put("success", true);
+					result.put("errorMsg", "该用户名被使用");
+				}
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error("保存用户信息错误",e);
@@ -105,7 +123,22 @@ public class PhoneController extends LogController{
 		}
 		WriterUtil.write(response, result.toString());
 	}
-	
+	// 导入
+		@RequestMapping("importC")
+		public void importC(MultipartFile newFile, Content content, HttpServletRequest request,User user,HttpServletResponse response){
+			//Integer userId = user.getUserid();
+			JSONObject result = new JSONObject();
+			try {
+				contentService.importC(newFile);
+				result.put("success", true);
+			} catch (Exception e) {
+				e.printStackTrace();
+				logger.error("导入用户信息错误",e);
+				result.put("success", true);
+				result.put("errorMsg", "对不起，操作失败");
+			}
+			WriterUtil.write(response, result.toString());
+		}
 	
 	@RequestMapping("deleteUser")
 	public void delUser(HttpServletRequest request,HttpServletResponse response){
@@ -113,7 +146,8 @@ public class PhoneController extends LogController{
 		try {
 			String[] ids=request.getParameter("ids").split(",");
 			for (String id : ids) {
-				userService.deleteUser(Integer.parseInt(id));
+				//userService.deleteUser(Integer.parseInt(id));
+				contentService.delC(Integer.parseInt(id));
 			}
 			result.put("success", true);
 			result.put("delNums", ids.length);

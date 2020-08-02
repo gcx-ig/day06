@@ -32,8 +32,7 @@
 				<div class="input-group">
 					<span class="input-group-addon">状态</span>
 					<select class="form-control" name="txt_search_status" id = "txt_search_status">
-						<option value="0">---请选择---</option>
-						
+						<option value="">---请选择---</option>
 						 	<option value="禁用">禁用</option>
 						 	<option value="启用">启用</option>
 						
@@ -55,7 +54,7 @@
 			<div class="modal-content">
 				<div class="modal-body">
 					<form id="form_user" method="post" action="reserveUser.htm">
-						<input type="hidden" name="userid" id="hidden_txt_userid" value=""/>
+						<input type="hidden" name="deviceid" id="hidden_txt_deviceid" value=""/>
 						<table style="border-collapse:separate; border-spacing:0px 10px;">
 							<tr>
 								<td>名：</td>
@@ -63,7 +62,7 @@
 									class="form-control" aria-required="true" required/></td>
 								<td>&nbsp;&nbsp;</td>
 								<td>价格：</td>
-								<td><input type="text" id="password" name="price"
+								<td><input type="text" id="price" name="price"
 									class="form-control" aria-required="true" required/></td>
 							</tr>
 							<tr>
@@ -72,14 +71,14 @@
 									class="form-control" aria-required="true" required/></td>
 								<td>&nbsp;&nbsp;</td>
 								<td>价格：</td>
-								<td><input type="text" id="price" name="price"
+								<td><input type="text" id="color" name="color"
 									class="form-control" aria-required="true" required/></td>
 							</tr>
 							<tr>
 								<td>状态：</td>
 								<td colspan="4">
-									<select class="form-control" name="txt_search_status" id = "txt_search_status">
-						<option value="0">---请选择---</option>
+									<select class="form-control" name="status" id = "status">
+						<option value="">---请选择---</option>
 						
 						 	<option value="禁用">禁用</option>
 						 	<option value="启用">启用</option>
@@ -88,23 +87,19 @@
 								</td>
 							</tr>
 							<tr>
-								<td>状态：</td>
+								<td>类型：</td>
 								<td colspan="4">
-									<select class="form-control" name="txt_search_deviceType" id = "txt_search_deviceType">
-						<option value="0">---请选择---</option>
+									<select class="form-control" name="deviceType" id = "deviceType">
+										<option value="">---请选择---</option>
+										<c:forEach items="${tlist}" var="r">
+										 	<option value="${r.deviceTypeId}">${r.typeName}</option>
+										</c:forEach>
+				                	</select>
 						
-						 	<option value="ios">ios</option>
-						 	<option value="麒麟">麒麟</option>
-						 	<option value="骁龙">骁龙</option>
 						
-                	</select>
 								</td>
 							</tr>
-							<tr>
-								<td valign="middle">备注：</td>
-								<td colspan="4"><textarea rows="7" cols="50"
-										name="userdescription" id="userdescription"></textarea></td>
-							</tr>
+							
 						</table>
 						
 						<div class="modal-footer">
@@ -120,8 +115,44 @@
 		</div>
 
 	</div>
-	
-	
+	<!--  echarts -->
+	<!-- <div class="modal fade" id="modal_user_echarts" role="dialog" aria-labelledby="modal_user_echarts" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-body">
+						<div id="main" style="width:500px;height:300px">
+						
+						</div>
+						
+						<div class="modal-footer">
+							
+							<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+						</div>
+				
+
+				</div>
+				
+			</div>
+
+		</div>
+
+	</div>  -->
+	<div class="modal fade" id="modal_user_echarts" role="dialog" aria-labelledby="modal_user_del" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+					 <h4 class="modal-title" id="modal_user_del_head"> 报表 </h4>
+				</div>
+				<div class="modal-body">
+							<div id="main" style="width: 500px;height: 300px"></div>
+				</div>
+				<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+			</div>
+			</div>
+		</div>
+	</div>
 	<!--删除对话框 -->
 	<div class="modal fade" id="modal_user_del" role="dialog" aria-labelledby="modal_user_del" aria-hidden="true">
 		<div class="modal-dialog">
@@ -263,7 +294,7 @@
 	                sortable:true
 	            },
 	            {
-	                field: 'deviceType',
+	                field: 'tname',
 	                title: '设备类型名称',
 	                sortable:true
 	            },
@@ -290,7 +321,10 @@
 	            {
 	                field: 'createtime',
 	                title: '创建时间',
-	                sortable:true
+	                sortable:true,
+	                formatter:function(value,row,index){
+	                	return new Date(value).Format('yyyy-MM-dd HH:mm:ss');
+	                }
 	            }
 	            ],
 	            onClickRow: function (row) {
@@ -306,7 +340,6 @@
 	            offset: params.offset,  //页码
 	            deviceName: $("#txt_search_deviceName").val(),
 	            status: $("#txt_search_status").val(),
-	            usertype: $("#txt_search_usertype").val(),
 	            search:params.search,
 	            order: params.order,
 	            ordername: params.sort
@@ -325,7 +358,7 @@
 	    	$("#btn_add").click(function(){
 	    		$('#password').attr("readOnly",false).val(getSelection.password);
 	    		$("#form_user").resetForm();
-	    		document.getElementById("hidden_txt_userid").value='';
+	    		document.getElementById("hidden_txt_deviceid").value='';
 	    		$('#modal_user_edit').modal({backdrop: 'static', keyboard: false});
 				$('#modal_user_edit').modal('show');
 	        });
@@ -342,7 +375,52 @@
 	    		}
 	    		
 	        });
-	    	
+	    	/* $("#btn_echarts").click(function(){
+		    	var MyEcharts=echarts.init(document.getElementById("main"));
+		    	
+		    	    $.ajax({
+		    	    	url:"echartsPerson.htm",
+		    	    	dataType:"json",
+		    	    	type:"post",
+		    	    	success:function(res){
+		    	    		if(res.success){
+		    	    			var xary=new Array();
+		    	    			var yary=new Array();
+		    	    			res.data.forEach(function(personVo){//饼图数据处理
+		    	    				xary.push(personVo.tname);
+		    	    			    yary.push(personVo.num);
+		    	    			   	   	    				
+		    	    			});
+		    	    	var	option = {//柱状图
+	    					    xAxis: {
+	    					        type: 'category',
+	    					        data: xary
+	    					    },
+	    					    yAxis: {
+	    					        type: 'value'
+	    					    },
+	    					    series: [{
+	    					        data: yary,
+	    					        type: 'bar',
+	    					        showBackground: true,
+	    					        backgroundStyle: {
+	    					            color: 'rgba(220, 220, 220, 0.8)'
+	    					        }
+	    					    }]
+	    					}; 
+		    	    			MyEcharts.setOption(option, true);
+
+	
+
+		    	    		}else{
+		    	    			$("#select_message").text(res.errorMsg);
+		    	    			$("#alertmod_table_user_mod").show();
+	    	    			}	
+	    	    		}
+	    	    	});
+		    	    $('#modal_user_echarts').modal({backdrop: 'static', keyboard: false});
+	    			$("#modal_user_echarts").show();  
+    	    	}); */
 	    	$("#btn_delete").click(function(){
 	    		var getSelections = $('#table_user').bootstrapTable('getSelections');
 	    		if(getSelections && getSelections.length>0){
@@ -353,7 +431,50 @@
 	    			$("#alertmod_table_user_mod").show();
 	    		}
 	        });
-	        
+	    	$("#btn_echarts").click(function(){
+	    		var myEcharts = echarts.init(document.getElementById("main"));
+	    		$.ajax({
+	    		    url:"echartsPerson.htm",
+	    		    dataType:"json",
+	    		    type:"post",
+	    		    success:function(res){
+	    		    	if(res.success){
+	    		    		
+	    		    		var xdata=[];
+	    		    		var ydata=[];
+	    		    		res.data.forEach(function(vo){
+	    		    			xdata.push(vo.tname);
+	    		    			ydata.push(vo.num);
+	    		    			var option = {
+	    		    					title : {
+	    		    						text : '初始化完毕，setOption填入数值'
+	    		    					},
+	    		    					tooltip : {},
+	    		    					legend : {
+	    		    					},
+	    		    					xAxis : {
+	    		    						data : xdata
+	    		    					},
+	    		    					yAxis : {},
+	    		    					series : [ {
+	    		    						name : "统计信息",
+	    		    						type : 'bar',
+	    		    						data : ydata,
+	    		    					} ]
+	    		    				};	
+	    		    			myEcharts.setOption(option,true);
+	    		    		});
+	    		    		$('#modal_user_echarts').modal({backdrop: 'static', keyboard: false});
+	    	    			$("#modal_user_echarts").show();
+	    	    		}else{
+	    	    			$("#select_message").text(res.errorMsg);
+	    	    			$("#alertmod_table_user_mod").show();
+	    	    		}
+	    		    }
+	    		});
+	    			
+	    		
+	        });
 	        
 	    };
 
@@ -365,7 +486,7 @@
 	});
 	
 	function initEditUser(getSelection){
-		$('#hidden_txt_userid').val(getSelection.userid);
+		$('#hidden_txt_deviceid').val(getSelection.deviceid);
 		$('#status').val(getSelection.status);
 		$('#deviceRam').val(getSelection.deviceRam);
 		$('#deviceType').val(getSelection.deviceType);
@@ -400,6 +521,20 @@
 		    }
 		});
 	});
+	Date.prototype.Format = function (fmt) {
+	    var o = {  
+	        "M+": this.getMonth() + 1, //月份   
+	        "d+": this.getDate(), //日   
+	        "H+": this.getHours(), //小时   
+	        "m+": this.getMinutes(), //分   
+	        "s+": this.getSeconds(), //秒   
+	        "S": this.getMilliseconds() //毫秒   
+	    };  
+	    if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));  
+	    for (var k in o)  
+	    if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));  
+	    return fmt;  
+	};
 	</script>
 
 </body>
