@@ -46,6 +46,9 @@ public class ContentService {
 		List<ContentVo> list = contentMapper.findAll(contentVo);
 		return new PageInfo<>(list);
 	}
+	public List<ContentVo> findAll(ContentVo contentVo){
+		return contentMapper.findAll(contentVo);
+	}
 	public List<Category> findC(){
 		return categoryMapper.selectAll();
 	}

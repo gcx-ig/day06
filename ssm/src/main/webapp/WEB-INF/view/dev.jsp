@@ -24,18 +24,18 @@
         <div class="row">
 			  <div class="col-lg-2">
 				<div class="input-group">
-			      <span class="input-group-addon">广告名 </span>
-			      <input type="text" name="contenttitle" class="form-control" id="txt_search_contenttitle" >
+			      <span class="input-group-addon">设备名 </span>
+			      <input type="text" name="deviceName" class="form-control" id="txt_search_deviceName" >
 				</div>
 			  </div>
 			  <div class="col-lg-2">
 				<div class="input-group">
-					<span class="input-group-addon">广告类型</span>
-					<select class="form-control" name="txt_search_contentcategoryid" id = "txt_search_contentcategoryid">
-						<option value="0">---请选择---</option>
-						<c:forEach items="${clist }" var="r">
-						 	<option value="${r.contencategoryid }">${r.categoryname }</option>
-						</c:forEach>
+					<span class="input-group-addon">状态</span>
+					<select class="form-control" name="txt_search_status" id = "txt_search_status">
+						<option value="">---请选择---</option>
+						 	<option value="禁用">禁用</option>
+						 	<option value="启用">启用</option>
+						
                 	</select>
 				</div>
 			 </div>
@@ -54,48 +54,51 @@
 			<div class="modal-content">
 				<div class="modal-body">
 					<form id="form_user" method="post" action="reserveUser.htm">
-						<input type="hidden" name="userid" id="hidden_txt_userid" value=""/>
+						<input type="hidden" name="deviceid" id="hidden_txt_deviceid" value=""/>
 						<table style="border-collapse:separate; border-spacing:0px 10px;">
 							<tr>
-								<td>广告标题：</td>
-								<td><input type="text" id="contenttitle" name="contenttitle"
+								<td>名：</td>
+								<td><input type="text" id="deviceName" name="deviceName"
 									class="form-control" aria-required="true" required/></td>
 								<td>&nbsp;&nbsp;</td>
-								<td>费用：</td>
+								<td>价格：</td>
 								<td><input type="text" id="price" name="price"
 									class="form-control" aria-required="true" required/></td>
 							</tr>
 							<tr>
-								<td>图片路径：</td>
-								<td><input type="text" id="picpath" name="picpath"
+								<td>内存：</td>
+								<td><input type="text" id="deviceRam" name="deviceRam"
 									class="form-control" aria-required="true" required/></td>
 								<td>&nbsp;&nbsp;</td>
-								<td>广告链接：</td>
-								<td><input type="text" id="contenturl" name="contenturl"
+								<td>价格：</td>
+								<td><input type="text" id="color" name="color"
 									class="form-control" aria-required="true" required/></td>
 							</tr>
 							<tr>
-								<td>广告分类：</td>
+								<td>状态：</td>
 								<td colspan="4">
-									<select class="form-control" name="contentcategoryid" id = "contentcategoryid" aria-required="true" required>
-											<option value="">---请选择---</option>
-											<c:forEach items="${clist }" var="r">
-											 	<option value="${r.contencategoryid }">${r.categoryname }</option>
-											</c:forEach>
-					                	
-				                	</select>
+									<select class="form-control" name="status" id = "status">
+						<option value="">---请选择---</option>
+						
+						 	<option value="禁用">禁用</option>
+						 	<option value="启用">启用</option>
+						
+                	</select>
 								</td>
 							</tr>
 							<tr>
-								<td>广告状态：</td>
+								<td>类型：</td>
 								<td colspan="4">
-									<select class="form-control" name="contentcategoryid" id = "contentcategoryid" aria-required="true" required>
-										<option value="">---请选择---</option>
-										<option value="启用">启用</option>
-										<option value="禁用">禁用</option>
+									<select class="form-control" name="deviceType" id = "deviceType">
+											<option value="">---请选择---</option>
+										 	<option value="ios">ios</option>
+										 	<option value="麒麟">麒麟</option>
 				                	</select>
+						
+						
 								</td>
 							</tr>
+							
 						</table>
 						
 						<div class="modal-footer">
@@ -111,21 +114,20 @@
 		</div>
 
 	</div>
-	<!--导入对话框 -->
-	<div class="modal fade" id="modal_user_import" role="dialog" aria-labelledby="modal_user_import" aria-hidden="true">
+	<!--  echarts -->
+	<!-- <div class="modal fade" id="modal_user_echarts" role="dialog" aria-labelledby="modal_user_echarts" aria-hidden="true">
 		<div class="modal-dialog">
 			<div class="modal-content">
 				<div class="modal-body">
-					<form id="form_import_import" method="post" action="importC.htm" enctype="multipart/form-data">
-<!-- 				
- -->						
-						<input type="file" name="newFile" id="newFile">
+						<div id="main" style="width:500px;height:300px">
+						
+						</div>
 						
 						<div class="modal-footer">
-							<button type="button" class="btn btn-primary"  id="submit_form_user_import">保存</button>
+							
 							<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
 						</div>
-					</form>
+				
 
 				</div>
 				
@@ -133,8 +135,23 @@
 
 		</div>
 
+	</div>  -->
+	<div class="modal fade" id="modal_user_echarts" role="dialog" aria-labelledby="modal_user_del" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+					 <h4 class="modal-title" id="modal_user_del_head"> 报表 </h4>
+				</div>
+				<div class="modal-body">
+							<div id="main" style="width: 500px;height: 300px"></div>
+				</div>
+				<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+			</div>
+			</div>
+		</div>
 	</div>
-	
 	<!--删除对话框 -->
 	<div class="modal fade" id="modal_user_del" role="dialog" aria-labelledby="modal_user_del" aria-hidden="true">
 		<div class="modal-dialog">
@@ -153,24 +170,7 @@
 			</div>
 		</div>
 	</div>
-	<!--导出对话框 -->
-	<div class="modal fade" id="modal_user_export" role="dialog" aria-labelledby="modal_user_export" aria-hidden="true">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<div class="modal-header">
-					 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-					 <h4 class="modal-title" id="modal_user_del_head"> 导出</h4>
-				</div>
-				<div class="modal-body">
-							导出记录？
-				</div>
-				<div class="modal-footer">
-				<button type="button" class="btn btn-danger"  id="del_user_export">导出</button>
-				<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-			</div>
-			</div>
-		</div>
-	</div>
+	
 	
 	<div class="ui-jqdialog modal-content" id="alertmod_table_user_mod"
 		dir="ltr" role="dialog"
@@ -236,28 +236,6 @@
 	    $("#submit_form_user_btn").click(function(){
 	    	$("#form_user").submit();
 	    });
-	    var validator = $("#form_import_import").validate({
-    		submitHandler: function(form){
-   		      $(form).ajaxSubmit({
-   		    	dataType:"json",
-   		    	success: function (data) {
-   		    		
-   		    		if(data.success && !data.errorMsg ){
-   		    			validator.resetForm();
-   		    			$('#modal_user_import').modal('hide');
-   		    			$("#btn_search").click();
-   		    		}else{
-   		    			$("#select_message").text(data.errorMsg);
-   		    			$("#alertmod_table_user_mod").show();
-   		    		}
-                }
-   		      });     
-   		   }  
-	    });
-
-	    $("#submit_form_user_import").click(function(){
-	    	$("#form_import_import").submit();
-	    });
 	});
 	
 	var init = function () {
@@ -274,7 +252,7 @@
 	    //初始化Table
 	    oTableInit.Init = function () {
 	        $('#table_user').bootstrapTable({
-	            url: 'contentList.htm',         //请求后台的URL（*）
+	            url: 'phoneList.htm',         //请求后台的URL（*）
 	            method: 'post',                      //请求方式（*）
 	            contentType : "application/x-www-form-urlencoded",
 	            toolbar: '#toolbar',                //工具按钮用哪个容器
@@ -282,7 +260,7 @@
 	            cache: false,                       //是否使用缓存，默认为true，所以一般情况下需要设置一下这个属性（*）
 	            pagination: true,                   //是否显示分页（*）
 	            sortable: true,                     //是否启用排序
-	            sortName: "contentid",
+	            sortName: "deviceid",
 	            sortOrder: "desc",                   //排序方式
 	            queryParams: oTableInit.queryParams,//传递参数（*）
 	            sidePagination: "server",           //分页方式：client客户端分页，server服务端分页（*）
@@ -304,28 +282,29 @@
 	                checkbox: true
 	            },
 	            {
-	                field: 'contentid',
+	                field: 'deviceid',
 	                title: '编号',
 	                sortable:true
-	            },
+	            }
+	            ,
 	            {
-	                field: 'contenttitle',
-	                title: '广告标题',
+	                field: 'deviceName',
+	                title: '设备名称',
 	                sortable:true
 	            },
 	            {
-	                field: 'cname',
-	                title: '广告分类名称',
+	                field: 'deviceType',
+	                title: '设备类型名称',
 	                sortable:true
 	            },
 	            {
-	                field: 'contenturl',
-	                title: '广告路径',
+	                field: 'deviceRam',
+	                title: '内存',
 	                sortable:true
 	            },
 	            {
-	                field: 'picpath',
-	                title: '图片路径',
+	                field: 'color',
+	                title: '机身颜色',
 	                sortable:true
 	            },
 	            {
@@ -335,7 +314,7 @@
 	            },
 	            {
 	                field: 'status',
-	                title: '广告状态',
+	                title: '设备状态',
 	                sortable:true
 	            },
 	            {
@@ -343,9 +322,10 @@
 	                title: '创建时间',
 	                sortable:true,
 	                formatter:function(value,row,index){
-	                	return new Date(value).Format('yyyy-MM-dd');
+	                	return new Date(value).Format('yyyy-MM-dd HH:mm:ss');
 	                }
-	            }],
+	            }
+	            ],
 	            onClickRow: function (row) {
 	            	$("#alertmod_table_user_mod").hide();
 	            }
@@ -357,8 +337,8 @@
 	        var temp = {//这里的键的名字和控制器的变量名必须一致，这边改动，控制器也需要改成一样的
 	            limit: params.limit,   //页面大小
 	            offset: params.offset,  //页码
-	            contenttitle: $("#txt_search_contenttitle").val(),
-	            contentcategoryid: $("#txt_search_contentcategoryid").val(),
+	            deviceName: $("#txt_search_deviceName").val(),
+	            status: $("#txt_search_status").val(),
 	            search:params.search,
 	            order: params.order,
 	            ordername: params.sort
@@ -377,15 +357,11 @@
 	    	$("#btn_add").click(function(){
 	    		$('#password').attr("readOnly",false).val(getSelection.password);
 	    		$("#form_user").resetForm();
-	    		document.getElementById("hidden_txt_userid").value='';
+	    		document.getElementById("hidden_txt_deviceid").value='';
 	    		$('#modal_user_edit').modal({backdrop: 'static', keyboard: false});
 				$('#modal_user_edit').modal('show');
 	        });
-	    	$("#btn_import").click(function(){
-	    		/* $("#form_import_import").resetForm(); */
-	    		$('#modal_user_import').modal({backdrop: 'static', keyboard: false});
-				$('#modal_user_import').modal('show');
-	        });
+	        
 	    	$("#btn_edit").click(function(){
 	    		var getSelections = $('#table_user').bootstrapTable('getSelections');
 	    		if(getSelections && getSelections.length==1){
@@ -398,7 +374,52 @@
 	    		}
 	    		
 	        });
-	    	
+	    	/* $("#btn_echarts").click(function(){
+		    	var MyEcharts=echarts.init(document.getElementById("main"));
+		    	
+		    	    $.ajax({
+		    	    	url:"echartsPerson.htm",
+		    	    	dataType:"json",
+		    	    	type:"post",
+		    	    	success:function(res){
+		    	    		if(res.success){
+		    	    			var xary=new Array();
+		    	    			var yary=new Array();
+		    	    			res.data.forEach(function(personVo){//饼图数据处理
+		    	    				xary.push(personVo.tname);
+		    	    			    yary.push(personVo.num);
+		    	    			   	   	    				
+		    	    			});
+		    	    	var	option = {//柱状图
+	    					    xAxis: {
+	    					        type: 'category',
+	    					        data: xary
+	    					    },
+	    					    yAxis: {
+	    					        type: 'value'
+	    					    },
+	    					    series: [{
+	    					        data: yary,
+	    					        type: 'bar',
+	    					        showBackground: true,
+	    					        backgroundStyle: {
+	    					            color: 'rgba(220, 220, 220, 0.8)'
+	    					        }
+	    					    }]
+	    					}; 
+		    	    			MyEcharts.setOption(option, true);
+
+	
+
+		    	    		}else{
+		    	    			$("#select_message").text(res.errorMsg);
+		    	    			$("#alertmod_table_user_mod").show();
+	    	    			}	
+	    	    		}
+	    	    	});
+		    	    $('#modal_user_echarts').modal({backdrop: 'static', keyboard: false});
+	    			$("#modal_user_echarts").show();  
+    	    	}); */
 	    	$("#btn_delete").click(function(){
 	    		var getSelections = $('#table_user').bootstrapTable('getSelections');
 	    		if(getSelections && getSelections.length>0){
@@ -409,9 +430,49 @@
 	    			$("#alertmod_table_user_mod").show();
 	    		}
 	        });
-	    	$("#btn_export").click(function(){
-	    			$('#modal_user_export').modal({backdrop: 'static', keyboard: false});
-	    			$("#modal_user_export").show();
+	    	$("#btn_echarts").click(function(){
+	    		var myEcharts = echarts.init(document.getElementById("main"));
+	    		$.ajax({
+	    		    url:"echartsPerson.htm",
+	    		    dataType:"json",
+	    		    type:"post",
+	    		    success:function(res){
+	    		    	if(res.success){
+	    		    		
+	    		    		var xdata=[];
+	    		    		var ydata=[];
+	    		    		res.data.forEach(function(vo){
+	    		    			xdata.push(vo.tname);
+	    		    			ydata.push(vo.num);
+	    		    			var option = {
+	    		    					title : {
+	    		    						text : '初始化完毕，setOption填入数值'
+	    		    					},
+	    		    					tooltip : {},
+	    		    					legend : {
+	    		    					},
+	    		    					xAxis : {
+	    		    						data : xdata
+	    		    					},
+	    		    					yAxis : {},
+	    		    					series : [ {
+	    		    						name : "统计信息",
+	    		    						type : 'bar',
+	    		    						data : ydata,
+	    		    					} ]
+	    		    				};	
+	    		    			myEcharts.setOption(option,true);
+	    		    		});
+	    		    		$('#modal_user_echarts').modal({backdrop: 'static', keyboard: false});
+	    	    			$("#modal_user_echarts").show();
+	    	    		}else{
+	    	    			$("#select_message").text(res.errorMsg);
+	    	    			$("#alertmod_table_user_mod").show();
+	    	    		}
+	    		    }
+	    		});
+	    			
+	    		
 	        });
 	        
 	    };
@@ -424,9 +485,13 @@
 	});
 	
 	function initEditUser(getSelection){
-		$('#hidden_txt_userid').val(getSelection.userid);
-		$('#roleid').val(getSelection.roleid);
-		$('#username').val(getSelection.username);
+		$('#hidden_txt_deviceid').val(getSelection.deviceid);
+		$('#status').val(getSelection.status);
+		$('#deviceRam').val(getSelection.deviceRam);
+		$('#deviceType').val(getSelection.deviceType);
+		$('#color').val(getSelection.color);
+		$('#price').val(getSelection.price);
+		$('#deviceName').val(getSelection.deviceName);
 		$('#userdescription').val(getSelection.userdescription);
 		$('#password').attr("readOnly",true).val(getSelection.password);
 	}
@@ -436,7 +501,7 @@
 		var idArr = new Array();
 		var ids;
 		getSelections.forEach(function(item){
-			idArr.push(item.contentid);
+			idArr.push(item.deviceid);
 		});
 		ids = idArr.join(",");
 		$.ajax({
@@ -447,23 +512,6 @@
 		    success:function(res){
 		    	if(res.success){
 	    			$('#modal_user_del').modal('hide');
-	    			$("#btn_search").click();
-	    		}else{
-	    			$("#select_message").text(res.errorMsg);
-	    			$("#alertmod_table_user_mod").show();
-	    		}
-		    }
-		});
-	});
-	$("#del_user_export").click(function(){
-	
-		$.ajax({
-		    url:"exportCon.htm",
-		    dataType:"json",
-		    type:"post",
-		    success:function(res){
-		    	if(res.success){
-	    			$('#modal_user_export').modal('hide');
 	    			$("#btn_search").click();
 	    		}else{
 	    			$("#select_message").text(res.errorMsg);

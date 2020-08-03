@@ -171,7 +171,24 @@
 			</div>
 		</div>
 	</div>
-	
+	<!--导出对话框 -->
+	<div class="modal fade" id="modal_user_export" role="dialog" aria-labelledby="modal_user_export" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+					 <h4 class="modal-title" id="modal_user_del_head"> 导出  </h4>
+				</div>
+				<div class="modal-body">
+							导出所有记录？
+				</div>
+				<div class="modal-footer">
+				<button type="button" class="btn btn-danger"  id="del_user_export">导出</button>
+				<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+			</div>
+			</div>
+		</div>
+	</div>
 	
 	<div class="ui-jqdialog modal-content" id="alertmod_table_user_mod"
 		dir="ltr" role="dialog"
@@ -431,6 +448,11 @@
 	    			$("#alertmod_table_user_mod").show();
 	    		}
 	        });
+    	    	$("#btn_export").click(function(){
+    	    		
+    	    			$('#modal_user_export').modal({backdrop: 'static', keyboard: false});
+    	    			$("#modal_user_export").show();
+    	        });
 	    	$("#btn_echarts").click(function(){
 	    		var myEcharts = echarts.init(document.getElementById("main"));
 	    		$.ajax({
@@ -513,6 +535,22 @@
 		    success:function(res){
 		    	if(res.success){
 	    			$('#modal_user_del').modal('hide');
+	    			$("#btn_search").click();
+	    		}else{
+	    			$("#select_message").text(res.errorMsg);
+	    			$("#alertmod_table_user_mod").show();
+	    		}
+		    }
+		});
+	});
+	$("#del_user_export").click(function(){
+		$.ajax({
+		    url:"exportPho.htm",
+		    dataType:"json",
+		    type:"post",
+		    success:function(res){
+		    	if(res.success){
+	    			$('#modal_user_export').modal('hide');
 	    			$("#btn_search").click();
 	    		}else{
 	    			$("#select_message").text(res.errorMsg);

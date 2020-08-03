@@ -21,32 +21,60 @@ import com.xiaoshu.entity.UserExample;
 import com.xiaoshu.entity.UserExample.Criteria;
 
 @Service
-public class DeviceService {
+public class DeviceService2 {
 
 	@Autowired
 	UserMapper userMapper;
 	@Autowired
-	private DevMapper deviceMapper;
+	private DeviceMapper deviceMapper;
+	@Autowired
+	private TypeMapper typeMapper;
 
 	
 
 	
-	public PageInfo<Dev> findPage(Dev deviceVo,Integer pageNum,Integer pageSize){
+	public PageInfo<DeviceVo> findPage(DeviceVo deviceVo,Integer pageNum,Integer pageSize){
 		PageHelper.startPage(pageNum, pageSize);
-		List<Dev> list = deviceMapper.findAll(deviceVo);
+		List<DeviceVo> list = deviceMapper.findAll(deviceVo);
 		return new PageInfo<>(list);
 	}
+	public List<DeviceVo> findAll(DeviceVo deviceVo){
+		return deviceMapper.findAll(deviceVo);
+	}
 	
-	
-	public void addD(Dev device){
+	public void addD(Device device){
 		deviceMapper.insert(device);
 	}
-	public void updateD(Dev device){
+	public void updateD(Device device){
 		deviceMapper.updateByPrimaryKeySelective(device);
 		
 	}
 	public void delD(Integer id){
 		deviceMapper.deleteByPrimaryKey(id);
 	}
+
+
+	public List<Type> findAllT() {
+		
+		return typeMapper.selectAll();
+		
+	}
+
+
+	public Device findByName(String deviceName) {
+		Device parm = new Device();
+		parm.setDeviceName(deviceName);
+		// TODO Auto-generated method stub
+		return deviceMapper.selectOne(parm);
+	}
+
+
+	public List<DeviceVo> findE() {
+		// TODO Auto-generated method stub
+		return deviceMapper.findE();
+	}
+
+
+	
 
 }
