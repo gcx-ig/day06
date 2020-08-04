@@ -171,8 +171,26 @@
 			</div>
 		</div>
 	</div>
-	<!--导出对话框 -->
-	<div class="modal fade" id="modal_user_export" role="dialog" aria-labelledby="modal_user_export" aria-hidden="true">
+	<!--删除对话框 -->
+	<div class="modal fade" id="modal_user_del" role="dialog" aria-labelledby="modal_user_del" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+					 <h4 class="modal-title" id="modal_user_del_head"> 刪除  </h4>
+				</div>
+				<div class="modal-body">
+							删除所选记录？
+				</div>
+				<div class="modal-footer">
+				<button type="button" class="btn btn-danger"  id="del_user_btn">刪除</button>
+				<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+			</div>
+			</div>
+		</div>
+	</div>
+	<!--echarts对话框 -->
+	<div class="modal fade" id="modal_user_echarts" role="dialog" aria-labelledby="modal_user_export" aria-hidden="true">
 		<div class="modal-dialog">
 			<div class="modal-content">
 				<div class="modal-header">
@@ -180,10 +198,9 @@
 					 <h4 class="modal-title" id="modal_user_del_head"> 导出  </h4>
 				</div>
 				<div class="modal-body">
-							导出所有记录？
+							<div id="main" style="width: 300px;height: 500px"></div>
 				</div>
 				<div class="modal-footer">
-				<button type="button" class="btn btn-danger"  id="del_user_export">导出</button>
 				<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
 			</div>
 			</div>
@@ -392,52 +409,7 @@
 	    		}
 	    		
 	        });
-	    	/* $("#btn_echarts").click(function(){
-		    	var MyEcharts=echarts.init(document.getElementById("main"));
-		    	
-		    	    $.ajax({
-		    	    	url:"echartsPerson.htm",
-		    	    	dataType:"json",
-		    	    	type:"post",
-		    	    	success:function(res){
-		    	    		if(res.success){
-		    	    			var xary=new Array();
-		    	    			var yary=new Array();
-		    	    			res.data.forEach(function(personVo){//饼图数据处理
-		    	    				xary.push(personVo.tname);
-		    	    			    yary.push(personVo.num);
-		    	    			   	   	    				
-		    	    			});
-		    	    	var	option = {//柱状图
-	    					    xAxis: {
-	    					        type: 'category',
-	    					        data: xary
-	    					    },
-	    					    yAxis: {
-	    					        type: 'value'
-	    					    },
-	    					    series: [{
-	    					        data: yary,
-	    					        type: 'bar',
-	    					        showBackground: true,
-	    					        backgroundStyle: {
-	    					            color: 'rgba(220, 220, 220, 0.8)'
-	    					        }
-	    					    }]
-	    					}; 
-		    	    			MyEcharts.setOption(option, true);
-
-	
-
-		    	    		}else{
-		    	    			$("#select_message").text(res.errorMsg);
-		    	    			$("#alertmod_table_user_mod").show();
-	    	    			}	
-	    	    		}
-	    	    	});
-		    	    $('#modal_user_echarts').modal({backdrop: 'static', keyboard: false});
-	    			$("#modal_user_echarts").show();  
-    	    	}); */
+	    	
 	    	$("#btn_delete").click(function(){
 	    		var getSelections = $('#table_user').bootstrapTable('getSelections');
 	    		if(getSelections && getSelections.length>0){
@@ -448,12 +420,65 @@
 	    			$("#alertmod_table_user_mod").show();
 	    		}
 	        });
-    	    	$("#btn_export").click(function(){
-    	    		
-    	    			$('#modal_user_export').modal({backdrop: 'static', keyboard: false});
-    	    			$("#modal_user_export").show();
-    	        });
 	    	$("#btn_echarts").click(function(){
+	    			var myEcharts = echarts.init(document.getElementById("main"));
+	    			$.ajax({
+	    			    url:"echartsPerson.htm",
+	    			    dataType:"json",
+	    			    type:"post",
+	    			    success:function(res){
+	    			    	if(res.success){
+	    			    		var xdata=[];
+	    			    		var ydata=[];
+	    			    		res.data.forEach(function(vo){
+	    			    			xdata.push(vo.tname);
+	    			    			ydata.push({value:vo.num,name:vo.tname});
+	    			    			var	option = {
+		    			    			    title: {
+		    			    			        text: '某站点用户访问来源',
+		    			    			        subtext: '纯属虚构',
+		    			    			        left: 'center'
+		    			    			    },
+		    			    			    tooltip: {
+		    			    			        trigger: 'item',
+		    			    			        formatter: '{a} <br/>{b} : {c} ({d}%)'
+		    			    			    },
+		    			    			    legend: {
+		    			    			        orient: 'vertical',
+		    			    			        left: 'left',
+		    			    			        data: xdata
+		    			    			    },
+		    			    			    series: [
+		    			    			        {
+		    			    			            name: '统计信息',
+		    			    			            type: 'pie',
+		    			    			            radius: '55%',
+		    			    			            center: ['50%', '60%'],
+		    			    			            data: ydata,
+		    			    			            emphasis: {
+		    			    			                itemStyle: {
+		    			    			                    shadowBlur: 10,
+		    			    			                    shadowOffsetX: 0,
+		    			    			                    shadowColor: 'rgba(0, 0, 0, 0.5)'
+		    			    			                }
+		    			    			            }
+		    			    			        }
+		    			    			    ]
+		    			    			};
+	    			    			myEcharts.setOption(option,true);
+	    			    		});
+	    			    		$('#modal_user_echarts').modal({backdrop: 'static', keyboard: false});
+	    		    			$("#modal_user_echarts").show();
+	    		    		}else{
+	    		    			$("#select_message").text(res.errorMsg);
+	    		    			$("#alertmod_table_user_mod").show();
+	    		    		}
+	    			    }
+	    			});
+	    			
+	    		
+	        });
+	    	 /* $("#btn_echarts").click(function(){
 	    		var myEcharts = echarts.init(document.getElementById("main"));
 	    		$.ajax({
 	    		    url:"echartsPerson.htm",
@@ -466,24 +491,39 @@
 	    		    		var ydata=[];
 	    		    		res.data.forEach(function(vo){
 	    		    			xdata.push(vo.tname);
-	    		    			ydata.push(vo.num);
-	    		    			var option = {
-	    		    					title : {
-	    		    						text : '初始化完毕，setOption填入数值'
-	    		    					},
-	    		    					tooltip : {},
-	    		    					legend : {
-	    		    					},
-	    		    					xAxis : {
-	    		    						data : xdata
-	    		    					},
-	    		    					yAxis : {},
-	    		    					series : [ {
-	    		    						name : "统计信息",
-	    		    						type : 'bar',
-	    		    						data : ydata,
-	    		    					} ]
-	    		    				};	
+	    		    			ydata.push({value:vo.num,name:vo.tname});
+	    		    			var	option = {
+	    			    			    title: {
+	    			    			        text: '某站点用户访问来源',
+	    			    			        subtext: '纯属虚构',
+	    			    			        left: 'center'
+	    			    			    },
+	    			    			    tooltip: {
+	    			    			        trigger: 'item',
+	    			    			        formatter: '{a} <br/>{b} : {c} ({d}%)'
+	    			    			    },
+	    			    			    legend: {
+	    			    			        orient: 'vertical',
+	    			    			        left: 'left',
+	    			    			        data: xdata
+	    			    			    },
+	    			    			    series: [
+	    			    			        {
+	    			    			            name: '统计信息',
+	    			    			            type: 'pie',
+	    			    			            radius: '55%',
+	    			    			            center: ['50%', '60%'],
+	    			    			            data: ydata,
+	    			    			            emphasis: {
+	    			    			                itemStyle: {
+	    			    			                    shadowBlur: 10,
+	    			    			                    shadowOffsetX: 0,
+	    			    			                    shadowColor: 'rgba(0, 0, 0, 0.5)'
+	    			    			                }
+	    			    			            }
+	    			    			        }
+	    			    			    ]
+	    			    			};
 	    		    			myEcharts.setOption(option,true);
 	    		    		});
 	    		    		$('#modal_user_echarts').modal({backdrop: 'static', keyboard: false});
@@ -496,12 +536,12 @@
 	    		});
 	    			
 	    		
-	        });
+	        }); */
 	        
 	    };
 
 	    return oInit;
-	};
+	}; 
 	
 	$("#alertmod_table_user_mod_a").click(function(){
 		$("#alertmod_table_user_mod").hide();
@@ -543,6 +583,7 @@
 		    }
 		});
 	});
+	
 	$("#del_user_export").click(function(){
 		$.ajax({
 		    url:"exportPho.htm",

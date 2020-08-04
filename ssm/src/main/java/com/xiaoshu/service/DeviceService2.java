@@ -20,6 +20,9 @@ import com.xiaoshu.entity.User;
 import com.xiaoshu.entity.UserExample;
 import com.xiaoshu.entity.UserExample.Criteria;
 
+import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisPool;
+
 @Service
 public class DeviceService2 {
 
@@ -30,7 +33,8 @@ public class DeviceService2 {
 	@Autowired
 	private TypeMapper typeMapper;
 
-	
+	@Autowired
+	private JedisPool jedisPool;
 
 	
 	public PageInfo<DeviceVo> findPage(DeviceVo deviceVo,Integer pageNum,Integer pageSize){
@@ -43,6 +47,9 @@ public class DeviceService2 {
 	}
 	
 	public void addD(Device device){
+		Jedis jedis = jedisPool.getResource();
+		jedis.set(device.getDeviceName(), device.getPrice().toString());
+		
 		deviceMapper.insert(device);
 	}
 	public void updateD(Device device){
